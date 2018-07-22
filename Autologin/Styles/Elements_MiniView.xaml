@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Autologin.Styles">
+
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="WebVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.WebStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="GatewayVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.GatewayStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="PortalVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.PortalStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressBarStyle">
+        <Setter Property="Height" Value="10"/>
+        <Setter Property="Maximum" Value="{Binding DataModel.TimerCycle}"/>
+        <Setter Property="Value" Value="{Binding DataModel.TimerState}"/>
+    </Style>
+           
+    
+</ResourceDictionary>

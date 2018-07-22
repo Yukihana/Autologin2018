@@ -1,9 +1,16 @@
 ﻿<Application x:Class="Autologin.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Autologin"
-             StartupUri="MainWindow.xaml">
+             xmlns:views="clr-namespace:Autologin.Views"
+             StartupUri="Views/MiniView.xaml"
+             Exit="Application_Exit">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Vectors.xaml"/>
+                
+                <ResourceDictionary Source="/Styles/Generic0.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
