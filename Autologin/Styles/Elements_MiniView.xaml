@@ -96,7 +96,7 @@
     </Style>
 
     <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressBarStyle">
-        <Setter Property="Height" Value="10"/>
+        <Setter Property="Height" Value="25"/>
         <Setter Property="Value" Value="{Binding DataModel.ProgressValue, NotifyOnSourceUpdated=True}"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="Indeterminate">
@@ -104,7 +104,7 @@
                 <Setter Property="IsIndeterminate" Value="true"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="Error">
-                <Setter Property="Foreground" Value="#FF7777"/>
+                <Setter Property="Foreground" Value="#FF0000"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>

@@ -71,9 +71,12 @@
                     {
                         r = null;
                     }
-                    if (r.Status == IPStatus.Success)
+                    if (r != null)
                     {
-                        return r;
+                        if (r.Status == IPStatus.Success)
+                        {
+                            return r;
+                        }
                     }
                 }
                 Timeout += TimeoutIncrement;
