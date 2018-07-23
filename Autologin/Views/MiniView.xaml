@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:Autologin.Views"
         mc:Ignorable="d"
         Title="MiniView" Height="450" Width="600">
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ProgressState="{Binding DataModel.ProgressState}" ProgressValue="{Binding DataModel.ProgressValue}"/>
+    </Window.TaskbarItemInfo>
     <Window.Resources>
         <ResourceDictionary Source="/Styles/Elements_MiniView.xaml"/>
     </Window.Resources>

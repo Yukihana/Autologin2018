@@ -37,8 +37,17 @@
 
     <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressBarStyle">
         <Setter Property="Height" Value="10"/>
-        <Setter Property="Maximum" Value="{Binding DataModel.TimerCycle}"/>
-        <Setter Property="Value" Value="{Binding DataModel.TimerState}"/>
+        <Setter Property="Maximum" Value="100"/>
+        <Setter Property="Value" Value="{Binding DataModel.ProgressValue}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="-1">
+                <Setter Property="IsIndeterminate" Value="true"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="0">
+                <Setter Property="Foreground" Value="#FFAAAA"/>
+            </DataTrigger>
+        </Style.Triggers>
+        
     </Style>
            
     

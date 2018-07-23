@@ -1,11 +1,13 @@
 ﻿namespace Autologin.Models
 {
+    using Autologin.DataTypes;
     #region MyRegion
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Windows.Shell;
     using System.Xml.Serialization;
     #endregion
 
@@ -18,7 +20,21 @@
         /// </summary>
         public ActivityModel() : base()
         {
+            Websites = new List<string>();
+            Gateway = new IPAddress(0);
+            Portal = new IPAddress(0);
+            Nic = new IPAddress(0);
 
+            LoginAction = string.Empty;
+            LoginCredentials = new List<Keyval>();
+            LoginIsPost = false;
+
+            Attempts = 4;
+            Timeout = 2000;
+            TimeoutIncrement = 1000;
+
+            TimerEnabled = true;
+            TimerCycle = 60;
         }
         #endregion
 
@@ -135,6 +151,100 @@
         }
         #endregion
 
+        // Login
+        #region LoginAction
+        private string _loginAction;
+        /// <summary>
+        /// The target site of the login form.
+        /// </summary>
+        public string LoginAction
+        {
+            get => _loginAction;
+            set
+            {
+                _loginAction = value;
+                OnPropertyChanged("LoginAction");
+            }
+        }
+        #endregion
+        #region LoginCredentials
+        private List<Keyval> _loginCredentials;
+        /// <summary>
+        /// The parameters sent in the form to authenticate the login.
+        /// </summary>
+        public List<Keyval> LoginCredentials
+        {
+            get => _loginCredentials;
+            set
+            {
+                _loginCredentials = value;
+                OnPropertyChanged("LoginCredentials");
+            }
+        }
+        #endregion
+        #region LoginIsPost
+        private bool _loginIsPost;
+        /// <summary>
+        /// Set whether the login form uses the GET or POST method.
+        /// </summary>
+        public bool LoginIsPost
+        {
+            get => _loginIsPost;
+            set
+            {
+                _loginIsPost = value;
+                OnPropertyChanged("LoginIsPost");
+            }
+        } 
+        #endregion
+
+        // Misc
+        #region Attempts
+        private int _attempts;
+        /// <summary>
+        /// Denotes the number of attempts to ping before concluding it as timeout.
+        /// </summary>
+        public int Attempts
+        {
+            get => _attempts;
+            set
+            {
+                _attempts = value;
+                OnPropertyChanged("Attempts");
+            }
+        }
+        #endregion
+        #region Timeout
+        private int _timeout;
+        /// <summary>
+        /// Denotes the maximum amount of time to wait for a ping reply (in miliseconds).
+        /// </summary>
+        public int Timeout
+        {
+            get => _timeout;
+            set
+            {
+                _timeout = value;
+                OnPropertyChanged("Timeout");
+            }
+        }
+        #endregion
+        #region TimeoutIncrement
+        private int _timeoutIncrement;
+        /// <summary>
+        /// Denotes the maximum amount of time to wait for a ping reply (in miliseconds).
+        /// </summary>
+        public int TimeoutIncrement
+        {
+            get => _timeoutIncrement;
+            set
+            {
+                _timeoutIncrement = value;
+                OnPropertyChanged("TimeoutIncrement");
+            }
+        }
+        #endregion
+
         // Timer
         #region TimerEnabled
         bool _timerEnabled;
@@ -162,6 +272,7 @@
         #endregion
         #region TimerState
         int _timerState;
+        [XmlIgnore]
         public int TimerState
         {
             get => _timerState;
@@ -173,9 +284,42 @@
         }
         #endregion
 
-        // Status
+        // Fields not to be saved
+        // Progress
+        #region ProgressValue
+        private int _progressValue;
+        [XmlIgnore]
+        public int ProgressValue
+        {
+            get => _progressValue;
+            set
+            {
+                _progressValue = value;
+                OnPropertyChanged("ProgressValue");
+            }
+        }
+        #endregion
+        #region ProgressState
+        private TaskbarItemProgressState _progressState;
+        [XmlIgnore]
+        public TaskbarItemProgressState ProgressState
+        {
+            get => _progressState;
+            set
+            {
+                _progressState = value;
+                OnPropertyChanged("ProgressState");
+            }
+        }
+        #endregion
+
+        // WebStatus
         #region WebStatus
         private bool _webStatus;
+        /// <summary>
+        /// Last polled status of internet availability.
+        /// </summary>
+        [XmlIgnore]
         public bool WebStatus
         {
             get => _webStatus;
@@ -186,8 +330,45 @@
             }
         }
         #endregion
-        #region MyRegion
+        #region WebPing
+        private long _lastWebPing;
+        /// <summary>
+        /// Ping time from last website poll.
+        /// </summary>
+        [XmlIgnore]
+        public long LastWebPing
+        {
+            get => _lastWebPing;
+            set
+            {
+                _lastWebPing = value;
+                OnPropertyChanged("LastWebPing");
+            }
+        }
+        #endregion
+        #region WebDest
+        private string _lastWebDest;
+        /// <summary>
+        /// Ping destination from last website poll.
+        /// </summary>
+        [XmlIgnore]
+        public string LastWebDest
+        {
+            get => _lastWebDest;
+            set
+            {
+                _lastWebDest = value;
+            }
+        }
+        #endregion
+
+        // GatewayStatus
+        #region GatewayStatus
         private bool _gatewayStatus;
+        /// <summary>
+        /// Last polled status of internet availability.
+        /// </summary>
+        [XmlIgnore]
         public bool GatewayStatus
         {
             get => _gatewayStatus;
@@ -198,8 +379,45 @@
             }
         }
         #endregion
+        #region GatewayPing
+        private long _lastGatewayPing;
+        /// <summary>
+        /// Ping time from last gateway poll.
+        /// </summary>
+        [XmlIgnore]
+        public long LastGatewayPing
+        {
+            get => _lastGatewayPing;
+            set
+            {
+                _lastGatewayPing = value;
+                OnPropertyChanged("LastGatewayPing");
+            }
+        }
+        #endregion
+        #region GatewayDest
+        private string _lastGatewayDest;
+        /// <summary>
+        /// Ping destination from last gateway poll.
+        /// </summary>
+        [XmlIgnore]
+        public string LastGatewayDest
+        {
+            get => _lastGatewayDest;
+            set
+            {
+                _lastGatewayDest = value;
+            }
+        }
+        #endregion
+
+        // PortalStatus
         #region PortalStatus
         private bool _portalStatus;
+        /// <summary>
+        /// Last polled status of internet availability.
+        /// </summary>
+        [XmlIgnore]
         public bool PortalStatus
         {
             get => _portalStatus;
@@ -207,6 +425,37 @@
             {
                 _portalStatus = value;
                 OnPropertyChanged("PortalStatus");
+            }
+        }
+        #endregion
+        #region PortalPing
+        private long _lastPortalPing;
+        /// <summary>
+        /// Ping time from last portal poll.
+        /// </summary>
+        [XmlIgnore]
+        public long LastPortalPing
+        {
+            get => _lastPortalPing;
+            set
+            {
+                _lastPortalPing = value;
+                OnPropertyChanged("LastPortalPing");
+            }
+        }
+        #endregion
+        #region PortalDest
+        private string _lastPortalDest;
+        /// <summary>
+        /// Ping destination from last portal poll.
+        /// </summary>
+        [XmlIgnore]
+        public string LastPortalDest
+        {
+            get => _lastPortalDest;
+            set
+            {
+                _lastPortalDest = value;
             }
         }
         #endregion
