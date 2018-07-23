@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Autologin.Views"
         mc:Ignorable="d"
-        Title="MiniView" Height="450" Width="600">
+        Title="AutoLogin 2018 - MiniView" Height="300" Width="700">
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo ProgressState="{Binding DataModel.ProgressState}" ProgressValue="{Binding DataModel.ProgressValue}"/>
+        <TaskbarItemInfo ProgressState="{Binding DataModel.ProgressState}" ProgressValue="{Binding DataModel.ProgressFloat}"/>
     </Window.TaskbarItemInfo>
     <Window.Resources>
         <ResourceDictionary Source="/Styles/Elements_MiniView.xaml"/>
@@ -18,7 +18,15 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Margin="10">
+            <Grid.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="Margin" Value="6"/>
+                </Style>
+            </Grid.Resources>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -28,23 +36,44 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
-            <!--WebView-->
-            <Path Style="{StaticResource WebVector}"/>
-            <TextBlock Grid.Column="1" Text="Website ping"/>
-            <TextBlock Grid.Column="2" Text="&lt;Will add later&gt;"/>
+
+            <!--NicView-->
+            <Border Grid.ColumnSpan="4" Style="{StaticResource NicBG}"/>
+            <Path Style="{StaticResource NicVector}"/>
+            <TextBlock Grid.Column="1" Text="NIC ping"/>
+            <TextBlock Grid.Column="2" Text="{Binding DataModel.LastNicPing}"/>
+            <TextBlock Grid.Column="3" Text="{Binding DataModel.LastNicDest}"/>
 
             <!--GatewayView-->
+            <Border Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource GatewayBG}"/>
             <Path Grid.Row="1" Style="{StaticResource GatewayVector}"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="Gateway ping"/>
-            <TextBlock Grid.Row="1" Grid.Column="2" Text="&lt;Will add later&gt;"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding DataModel.LastGatewayPing}"/>
+            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding DataModel.LastGatewayDest}"/>
 
             <!--PortalView-->
+            <Border Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource PortalBG}"/>
             <Path Grid.Row="2" Style="{StaticResource PortalVector}"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="Portal ping"/>
-            <TextBlock Grid.Row="2" Grid.Column="2" Text="&lt;Will add later&gt;"/>
-
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding DataModel.LastPortalPing}"/>
+            <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding DataModel.LastPortalDest}"/>
+            
+            <!--LoginView-->
+            <Border Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource LoginBG}"/>
+            <Path Grid.Row="3" Style="{StaticResource LoginVector}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="Login"/>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding DataModel.LoginSearchString}"/>
+            <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding DataModel.LoginAction}"/>
+            
+            <!--WebView-->
+            <Border Grid.Row="4" Grid.ColumnSpan="4" Style="{StaticResource WebBG}"/>
+            <Path Grid.Row="4" Style="{StaticResource WebVector}"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="Website ping"/>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding DataModel.LastWebPing}"/>
+            <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding DataModel.LastWebDest}"/>
+            
         </Grid>
         <ProgressBar Grid.Row="1" Style="{StaticResource ProgressBarStyle}"/>
     </Grid>

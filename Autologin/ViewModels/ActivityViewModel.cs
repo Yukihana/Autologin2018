@@ -118,9 +118,8 @@
             // Check if it's a hit, execute
             if(DataModel.TimerState >= DataModel.TimerCycle)
             {
-                InvokeRoutine();
-                DataModel.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
                 DataModel.TimerState = 0;
+                InvokeRoutine();
             }
         }
         #endregion
@@ -129,7 +128,8 @@
         #region Routine
         private void InvokeRoutine()
         {
-            if (AsyncWorkerIsBusy != true)
+            DataModel.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+            if (! AsyncWorkerIsBusy)
             {
                 Task.Run(()=>AsyncSubroutine());
             }
@@ -141,37 +141,14 @@
             // Mark locking flag
             AsyncWorkerIsBusy = true;
 
-            bool w = false, g = false, p = false, n = false, d = false;
-            // Web
-            w = ProcessWebStatus();
-
-            // Gateway
-            if(w == false)
+            // Run Check Routine
+            if(DataModel.WebStatus)
             {
-                g = ProcessGatewayStatus();
+                await PassiveSubroutine();
             }
-
-            // Portal
-            if (g == true)
+            else
             {
-                p = ProcessPortalStatus();
-            }
-
-            // Login
-            if(p == true)
-            {
-                n = await ProcessLoginStatus();
-
-                if(n == false)
-                {
-                    d = await DoLogin();
-                }
-            }
-
-            // Recheck for Connectivity
-            if(d == true)
-            {
-                w = ProcessWebStatus();
+                await ActiveSubroutine();
             }
 
             // Unmark locking flag
@@ -179,33 +156,94 @@
 
             // Post-Processing
             DataModel.ProgressState = (DataModel.WebStatus) ? System.Windows.Shell.TaskbarItemProgressState.Normal : System.Windows.Shell.TaskbarItemProgressState.Error;
+        }
+        /// <summary>
+        /// To be used when last poll failed to ping websites.
+        /// </summary>
+        private async Task ActiveSubroutine()
+        {
+            bool n = false, w = false, g = false, p = false, d = false;
 
-            // Invoke Statistics on Async
-            AsyncStatistics();
+            // Ping in near-to-far order
+            n = ProcessNicStatus();
+            g = ProcessGatewayStatus();
+            p = ProcessPortalStatus();
+
+            // Check for Login
+            if (g && p)
+            {
+                d = await ProcessLoginStatus();
+                if (!d)
+                {
+                    await DoLogin();
+                }
+                DataModel.LoginStatus = await ProcessLoginStatus();
+            }
+            else
+            {
+                DataModel.LoginStatus = false;
+            }
+
+            // Finally make sure web is connected
+            w = ProcessWebStatus();
+        }
+        /// <summary>
+        /// To be used when last poll succeeded at pinging websites.
+        /// </summary>
+        private async Task PassiveSubroutine()
+        {
+            bool n = false, w = false, g = false, p = false, d = false;
+
+            // Ping in far-to-near order
+            w = ProcessWebStatus();
+            p = ProcessPortalStatus();
+            g = ProcessGatewayStatus();
+            n = ProcessNicStatus();
+
+            // Login if conditions meet
+            if(!w && p && g)
+            {
+                d = await ProcessLoginStatus();
+                if(!d)
+                {
+                    await DoLogin();
+                }
+                DataModel.LoginStatus = await ProcessLoginStatus();
+            }
+
+            if (!g)
+            {
+                DataModel.LoginStatus = false;
+            }
+
+            // Final Check
+            w = ProcessWebStatus();
         }
         #endregion
 
-
         #region AsyncRoutineParts
-        private bool ProcessWebStatus()
+        private bool ProcessNicStatus()
         {
             // Get State
             var r = NetworkExtensions.GetPingByTries(
-                DataModel.Websites,
+                new List<IPAddress>()
+                    {
+                        DataModel.Nic
+                    },
                 DataModel.Attempts,
                 DataModel.Timeout,
                 DataModel.TimeoutIncrement
                 );
 
             // Process Results
-            DataModel.WebStatus = !(r == null);
+            DataModel.NicStatus = !(r == null);
             if (r != null)
             {
-                DataModel.LastWebPing = r.RoundtripTime;
-                DataModel.LastWebDest = r.Address.ToString();
+                DataModel.LastNicPing = r.RoundtripTime;
+                DataModel.LastNicDest = r.Address.ToString();
             }
 
-            return DataModel.WebStatus;
+            return DataModel.NicStatus;
         }
         private bool ProcessGatewayStatus()
         {
@@ -215,8 +253,9 @@
                     {
                         DataModel.Gateway
                     },
-                5,
-                5000
+                DataModel.Attempts,
+                DataModel.Timeout,
+                DataModel.TimeoutIncrement
                 );
 
             // Process Results
@@ -237,8 +276,9 @@
                     {
                         DataModel.Portal
                     },
-                5,
-                5000
+                DataModel.Attempts,
+                DataModel.Timeout,
+                DataModel.TimeoutIncrement
                 );
 
             // Process Results
@@ -251,33 +291,64 @@
 
             return DataModel.PortalStatus;
         }
-        private async Task<bool> DoLogin()
+        private bool ProcessWebStatus()
         {
-            HttpClient client = new HttpClient();
-            var httpparams = new FormUrlEncodedContent(
-                new List<KeyValuePair<string, string>>()
-                {
-                    new KeyValuePair<string, string>("user", "souviks_sim"),
-                    new KeyValuePair<string, string>("pass", "8697243779"),
-                    new KeyValuePair<string, string>("login", "Login")
-                }
-            );
-            var response = await client.PostAsync("http://10.254.254.4/0/up/", httpparams);
-            var responseData = await response.Content.ReadAsStringAsync();
+            // Get State
+            var r = NetworkExtensions.GetPingByTries(
+                DataModel.Websites,
+                DataModel.Attempts,
+                DataModel.Timeout,
+                DataModel.TimeoutIncrement
+                );
 
-            return responseData.Contains("12964004564");
+            // Process Results
+            DataModel.WebStatus = !(r == null);
+            if (r != null)
+            {
+                DataModel.LastWebPing = r.RoundtripTime;
+                DataModel.LastWebDest = r.Address.ToString();
+            }
+
+            return DataModel.WebStatus;
         }
         private async Task<bool> ProcessLoginStatus()
         {
+            try
+            {
+                HttpClient client = new HttpClient();
+                var responseData = await client.GetStringAsync(DataModel.LoginAction);
+                DataModel.LoginStatus = responseData.Contains(DataModel.LoginSearchString);
+                return DataModel.LoginStatus;
+            }
+            catch(Exception)
+            {
+            }
+
+            return false;
+        }
+        private async Task<bool> DoLogin()
+        {
             HttpClient client = new HttpClient();
-            var responseData = await client.GetStringAsync("http://10.254.254.4/0/up/");
-            return responseData.Contains("12964004564");
+            var httpparams = NetworkExtensions.EncodeParams(DataModel.LoginCredentials);
+            string responseData = string.Empty;
+            try
+            {   
+                if (DataModel.LoginIsPost)
+                {
+                    var response = await client.PostAsync(DataModel.LoginAction, httpparams);
+                    responseData = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    responseData = await client.GetStringAsync(DataModel.LoginAction + "?" + httpparams);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+            }
+            return false;
         }
         #endregion
-
-        private void AsyncStatistics()
-        {
-            
-        }
     }
 }

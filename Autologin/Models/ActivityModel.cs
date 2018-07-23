@@ -20,6 +20,7 @@
         /// </summary>
         public ActivityModel() : base()
         {
+            // Saved Data
             Websites = new List<string>();
             Gateway = new IPAddress(0);
             Portal = new IPAddress(0);
@@ -28,13 +29,37 @@
             LoginAction = string.Empty;
             LoginCredentials = new List<Keyval>();
             LoginIsPost = false;
+            LoginSearchString = string.Empty;
 
             Attempts = 4;
             Timeout = 2000;
             TimeoutIncrement = 1000;
 
             TimerEnabled = true;
+            TimerState = 0;
             TimerCycle = 60;
+
+            // Ignored Data
+            ProgressValue = 0;
+            ProgressState = TaskbarItemProgressState.Normal;
+
+            NicStatus = false;
+            LastNicPing = 0;
+            LastNicDest = string.Empty;
+
+            GatewayStatus = false;
+            LastGatewayPing = 0;
+            LastGatewayDest = string.Empty;
+
+            PortalStatus = false;
+            LastPortalPing = 0;
+            LastPortalDest = string.Empty;
+
+            WebStatus = false;
+            LastWebPing = 0;
+            LastWebDest = string.Empty;
+
+            LoginStatus = false;
         }
         #endregion
 
@@ -195,7 +220,22 @@
                 _loginIsPost = value;
                 OnPropertyChanged("LoginIsPost");
             }
-        } 
+        }
+        #endregion
+        #region LoginSearchString
+        private string _loginSearchString;
+        /// <summary>
+        /// The target site of the login form.
+        /// </summary>
+        public string LoginSearchString
+        {
+            get => _loginSearchString;
+            set
+            {
+                _loginSearchString = value;
+                OnPropertyChanged("LoginSearchString");
+            }
+        }
         #endregion
 
         // Misc
@@ -279,6 +319,8 @@
             set
             {
                 _timerState = value;
+                ProgressFloat = (TimerCycle != 0) ? ((float)TimerState / TimerCycle) : 0;
+                ProgressValue = (int)(ProgressFloat * 100);
                 OnPropertyChanged("TimerState");
             }
         }
@@ -299,6 +341,19 @@
             }
         }
         #endregion
+        #region ProgressFloat
+        private float _progressFloat;
+        [XmlIgnore]
+        public float ProgressFloat
+        {
+            get => _progressFloat;
+            set
+            {
+                _progressFloat = value;
+                OnPropertyChanged("ProgressFloat");
+            }
+        }
+        #endregion
         #region ProgressState
         private TaskbarItemProgressState _progressState;
         [XmlIgnore]
@@ -313,51 +368,51 @@
         }
         #endregion
 
-        // WebStatus
-        #region WebStatus
-        private bool _webStatus;
+        // NicStatus
+        #region NicStatus
+        private bool _nicStatus;
         /// <summary>
         /// Last polled status of internet availability.
         /// </summary>
         [XmlIgnore]
-        public bool WebStatus
+        public bool NicStatus
         {
-            get => _webStatus;
+            get => _nicStatus;
             set
             {
-                _webStatus = value;
-                OnPropertyChanged("WebStatus");
+                _nicStatus = value;
+                OnPropertyChanged("NicStatus");
             }
         }
         #endregion
-        #region WebPing
-        private long _lastWebPing;
+        #region NicPing
+        private long _lastNicPing;
         /// <summary>
-        /// Ping time from last website poll.
+        /// Ping time from last nic poll.
         /// </summary>
         [XmlIgnore]
-        public long LastWebPing
+        public long LastNicPing
         {
-            get => _lastWebPing;
+            get => _lastNicPing;
             set
             {
-                _lastWebPing = value;
-                OnPropertyChanged("LastWebPing");
+                _lastNicPing = value;
+                OnPropertyChanged("LastNicPing");
             }
         }
         #endregion
-        #region WebDest
-        private string _lastWebDest;
+        #region NicDest
+        private string _lastNicDest;
         /// <summary>
-        /// Ping destination from last website poll.
+        /// Ping destination from last nic poll.
         /// </summary>
         [XmlIgnore]
-        public string LastWebDest
+        public string LastNicDest
         {
-            get => _lastWebDest;
+            get => _lastNicDest;
             set
             {
-                _lastWebDest = value;
+                _lastNicDest = value;
             }
         }
         #endregion
@@ -460,5 +515,72 @@
         }
         #endregion
 
+        // WebStatus
+        #region WebStatus
+        private bool _webStatus;
+        /// <summary>
+        /// Last polled status of internet availability.
+        /// </summary>
+        [XmlIgnore]
+        public bool WebStatus
+        {
+            get => _webStatus;
+            set
+            {
+                _webStatus = value;
+                OnPropertyChanged("WebStatus");
+            }
+        }
+        #endregion
+        #region WebPing
+        private long _lastWebPing;
+        /// <summary>
+        /// Ping time from last website poll.
+        /// </summary>
+        [XmlIgnore]
+        public long LastWebPing
+        {
+            get => _lastWebPing;
+            set
+            {
+                _lastWebPing = value;
+                OnPropertyChanged("LastWebPing");
+            }
+        }
+        #endregion
+        #region WebDest
+        private string _lastWebDest;
+        /// <summary>
+        /// Ping destination from last website poll.
+        /// </summary>
+        [XmlIgnore]
+        public string LastWebDest
+        {
+            get => _lastWebDest;
+            set
+            {
+                _lastWebDest = value;
+                OnPropertyChanged("LastWebDest");
+            }
+        }
+        #endregion
+
+        // LoggedInStatus
+        #region LoginStatus
+        private bool _loginStatus;
+        /// <summary>
+        /// Last polled status of internet availability.
+        /// </summary>
+        [XmlIgnore]
+        public bool LoginStatus
+        {
+            get => _loginStatus;
+            set
+            {
+                _loginStatus = value;
+                OnPropertyChanged("LoginStatus");
+            }
+        }
+        #endregion
     }
 }

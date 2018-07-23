@@ -2,6 +2,88 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Autologin.Styles">
 
+    <Style TargetType="{x:Type Border}" x:Key="NicBG">
+        <Setter Property="Background" Value="#22FF0000"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.NicStatus}" Value="true">
+                <Setter Property="Background" Value="#3300FF00"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Border}" x:Key="GatewayBG">
+        <Setter Property="Background" Value="#22FF0000"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.GatewayStatus}" Value="true">
+                <Setter Property="Background" Value="#3300FF00"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Border}" x:Key="PortalBG">
+        <Setter Property="Background" Value="#22FF0000"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.PortalStatus}" Value="true">
+                <Setter Property="Background" Value="#3300FF00"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Border}" x:Key="LoginBG">
+        <Setter Property="Background" Value="#22FF0000"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.LoginStatus}" Value="true">
+                <Setter Property="Background" Value="#3300FF00"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Border}" x:Key="WebBG">
+        <Setter Property="Background" Value="#22FF0000"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.WebStatus}" Value="true">
+                <Setter Property="Background" Value="#3300FF00"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Vectors-->
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="NicVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.NicStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="GatewayVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.GatewayStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="PortalVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.PortalStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="LoginVector">
+        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Data" Value="{StaticResource Check}"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataModel.LoginStatus}" Value="true">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
     <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="WebVector">
         <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
         <Setter Property="Data" Value="{StaticResource Check}"/>
@@ -13,42 +95,18 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="GatewayVector">
-        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
-        <Setter Property="Data" Value="{StaticResource Check}"/>
-        <Setter Property="Visibility" Value="Hidden"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding DataModel.GatewayStatus}" Value="true">
-                <Setter Property="Visibility" Value="Visible"/>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-    
-    <Style TargetType="{x:Type Path}" BasedOn="{StaticResource Vector24}" x:Key="PortalVector">
-        <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
-        <Setter Property="Data" Value="{StaticResource Check}"/>
-        <Setter Property="Visibility" Value="Hidden"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding DataModel.PortalStatus}" Value="true">
-                <Setter Property="Visibility" Value="Visible"/>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
     <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressBarStyle">
         <Setter Property="Height" Value="10"/>
-        <Setter Property="Maximum" Value="100"/>
-        <Setter Property="Value" Value="{Binding DataModel.ProgressValue}"/>
+        <Setter Property="Value" Value="{Binding DataModel.ProgressValue, NotifyOnSourceUpdated=True}"/>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="-1">
+            <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="Indeterminate">
+                <Setter Property="Value" Value="100"/>
                 <Setter Property="IsIndeterminate" Value="true"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="0">
-                <Setter Property="Foreground" Value="#FFAAAA"/>
+            <DataTrigger Binding="{Binding DataModel.ProgressState}" Value="Error">
+                <Setter Property="Foreground" Value="#FF7777"/>
             </DataTrigger>
         </Style.Triggers>
-        
     </Style>
-           
     
 </ResourceDictionary>
