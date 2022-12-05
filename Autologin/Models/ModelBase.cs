@@ -1,14 +1,11 @@
-﻿namespace Autologin.Models
-{
-    #region Includes
-    using System;
-    using System.ComponentModel;
-    #endregion
+﻿using System;
+using System.ComponentModel;
 
+namespace Autologin.Models
+{
     [Serializable]
     public class ModelBase : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -19,6 +16,5 @@
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
     }
 }

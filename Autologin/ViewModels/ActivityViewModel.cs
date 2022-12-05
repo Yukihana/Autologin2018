@@ -1,26 +1,16 @@
-﻿namespace Autologin.ViewModels
-{
-    #region Includes
-    using Autologin.Extensions;
-    using Autologin.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.NetworkInformation;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Timers;
-    using System.Windows;
-    using System.Windows.Threading;
-    #endregion
+﻿using Autologin.Extensions;
+using Autologin.Models;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Timers;
 
-    class ActivityViewModel : ViewModelBase
+namespace Autologin.ViewModels
+{
+    internal class ActivityViewModel : ViewModelBase
     {
-        #region Constructor(s)
         public ActivityViewModel()
         {
             DataIdentifier = "ActivityData";
@@ -35,11 +25,11 @@
             // Timer Start
             timer.Start();
         }
-        #endregion
 
         // Components
-        #region DataModel
+
         private ActivityModel _dataModel;
+
         /// <summary>
         /// The DataModel for the associated view
         /// </summary>
@@ -52,6 +42,7 @@
                 SaveData(this, new ActivityModel());
             }
         }
+
         /// <summary>
         /// Loads the DataModel using the Storage Controller.
         /// </summary>
@@ -60,13 +51,14 @@
             // Load Data
             LoadData(this, new ActivityModel());
         }
-        #endregion
 
-        #region Timer
+        // Timer
+
         /// <summary>
         /// A Timer object to repeat the primary routine
         /// </summary>
         public Timer timer = null;
+
         /// <summary>
         /// Resets/loads the timer settings
         /// </summary>
@@ -96,10 +88,11 @@
                 }
             }
         }
+
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // Stop timer if disabled
-            if(!DataModel.TimerEnabled)
+            if (!DataModel.TimerEnabled)
             {
                 timer.Stop();
                 return;
@@ -116,33 +109,33 @@
             DataModel.TimerState++;
 
             // Check if it's a hit, execute
-            if(DataModel.TimerState >= DataModel.TimerCycle)
+            if (DataModel.TimerState >= DataModel.TimerCycle)
             {
                 DataModel.TimerState = 0;
                 InvokeRoutine();
             }
         }
-        #endregion
 
         // Execution
-        #region Routine
+
         private void InvokeRoutine()
         {
             DataModel.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
-            if (! AsyncWorkerIsBusy)
+            if (!AsyncWorkerIsBusy)
             {
-                Task.Run(()=>AsyncSubroutine());
+                Task.Run(() => AsyncSubroutine());
             }
         }
 
         private bool AsyncWorkerIsBusy = false;
+
         private async void AsyncSubroutine()
         {
             // Mark locking flag
             AsyncWorkerIsBusy = true;
 
             // Run Check Routine
-            if(DataModel.WebStatus)
+            if (DataModel.WebStatus)
             {
                 await PassiveSubroutine();
             }
@@ -157,12 +150,13 @@
             // Post-Processing
             DataModel.ProgressState = (DataModel.WebStatus) ? System.Windows.Shell.TaskbarItemProgressState.Normal : System.Windows.Shell.TaskbarItemProgressState.Error;
         }
+
         /// <summary>
         /// To be used when last poll failed to ping websites.
         /// </summary>
         private async Task ActiveSubroutine()
         {
-            bool n = false, w = false, g = false, p = false, d = false;
+            bool n, w, g, p, d;
 
             // Ping in near-to-far order
             n = ProcessNicStatus();
@@ -187,12 +181,13 @@
             // Finally make sure web is connected
             w = ProcessWebStatus();
         }
+
         /// <summary>
         /// To be used when last poll succeeded at pinging websites.
         /// </summary>
         private async Task PassiveSubroutine()
         {
-            bool n = false, w = false, g = false, p = false, d = false;
+            bool n, w, g = false, p = false, d;
 
             // Ping in far-to-near order
             w = ProcessWebStatus();
@@ -201,10 +196,10 @@
             n = ProcessNicStatus();
 
             // Login if conditions meet
-            if(!w && p && g)
+            if (!w && p && g)
             {
                 d = await ProcessLoginStatus();
-                if(!d)
+                if (!d)
                 {
                     await DoLogin();
                 }
@@ -219,9 +214,9 @@
             // Final Check
             w = ProcessWebStatus();
         }
-        #endregion
 
-        #region AsyncRoutineParts
+        // AsyncRoutineParts
+
         private bool ProcessNicStatus()
         {
             // Get State
@@ -245,6 +240,7 @@
 
             return DataModel.NicStatus;
         }
+
         private bool ProcessGatewayStatus()
         {
             // Get State
@@ -268,6 +264,7 @@
 
             return DataModel.GatewayStatus;
         }
+
         private bool ProcessPortalStatus()
         {
             // Get State
@@ -291,6 +288,7 @@
 
             return DataModel.PortalStatus;
         }
+
         private bool ProcessWebStatus()
         {
             // Get State
@@ -311,6 +309,7 @@
 
             return DataModel.WebStatus;
         }
+
         private async Task<bool> ProcessLoginStatus()
         {
             try
@@ -320,19 +319,20 @@
                 DataModel.LoginStatus = responseData.Contains(DataModel.LoginSearchString);
                 return DataModel.LoginStatus;
             }
-            catch(Exception)
+            catch (Exception)
             {
             }
 
             return false;
         }
+
         private async Task<bool> DoLogin()
         {
             HttpClient client = new HttpClient();
             var httpparams = NetworkExtensions.EncodeParams(DataModel.LoginCredentials);
             string responseData = string.Empty;
             try
-            {   
+            {
                 if (DataModel.LoginIsPost)
                 {
                     var response = await client.PostAsync(DataModel.LoginAction, httpparams);
@@ -349,6 +349,5 @@
             }
             return false;
         }
-        #endregion
     }
 }

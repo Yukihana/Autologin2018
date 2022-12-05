@@ -1,25 +1,25 @@
-﻿namespace Autologin.Storage
-{
-    #region Includes
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Xml.Serialization;
-    using Autologin.Models;
-    #endregion
+﻿using Autologin.Models;
+using System;
+using System.Xml.Serialization;
 
+namespace Autologin.Storage
+{
     [Serializable, XmlRoot("AutologinData")]
     public class StorageModel : ModelBase
     {
-        #region Constructor(s)
+        // Infrastructure
+
+        private ActivityModel _activityData;
+
+        // Lifecycle
+
         public StorageModel()
         {
             ActivityData = new ActivityModel();
         }
-        #endregion
 
-        #region ActivityModel (Generic)
-        private ActivityModel _activityData;
+        // API
+
         public ActivityModel ActivityData
         {
             get => _activityData;
@@ -29,6 +29,5 @@
                 OnPropertyChanged("ActivityData");
             }
         }
-        #endregion
     }
 }

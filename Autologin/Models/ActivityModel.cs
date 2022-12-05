@@ -1,22 +1,17 @@
-﻿namespace Autologin.Models
-{
-    using Autologin.DataTypes;
-    #region MyRegion
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Text;
-    using System.Windows.Shell;
-    using System.Xml.Serialization;
-    #endregion
+﻿using Autologin.DataTypes;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Windows.Shell;
+using System.Xml.Serialization;
 
+namespace Autologin.Models
+{
     [Serializable]
     public class ActivityModel : ModelBase
     {
-        #region Constructor(s)
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ActivityModel() : base()
         {
@@ -61,23 +56,26 @@
 
             LoginStatus = false;
         }
-        #endregion
 
         // Addresses
+
         #region Gateway
-        string _gateway;
+
+        private string _gateway;
+
         /// <summary>
         /// Store as string since IPAddress is not serializable.
         /// </summary>
         public string GatewayIP
         {
-            get=> _gateway;
+            get => _gateway;
             set
             {
                 _gateway = value;
                 OnPropertyChanged("GatewayIP");
             }
         }
+
         /// <summary>
         /// IP Address of the Gateway
         /// </summary>
@@ -95,9 +93,13 @@
                 OnPropertyChanged("Gateway");
             }
         }
-        #endregion
+
+        #endregion Gateway
+
         #region Portal
-        string _portal;
+
+        private string _portal;
+
         /// <summary>
         /// Store as string since IPAddress is not serializable.
         /// </summary>
@@ -110,6 +112,7 @@
                 OnPropertyChanged("PortalIP");
             }
         }
+
         /// <summary>
         /// IP Address of the Login-Portal
         /// </summary>
@@ -127,9 +130,13 @@
                 OnPropertyChanged("Portal");
             }
         }
-        #endregion
+
+        #endregion Portal
+
         #region NIC
-        string _nic;
+
+        private string _nic;
+
         /// <summary>
         /// Store as string since IPAddress is not serializable.
         /// </summary>
@@ -142,6 +149,7 @@
                 OnPropertyChanged("NicIP");
             }
         }
+
         /// <summary>
         /// IP Address of the computer's network interface
         /// </summary>
@@ -159,9 +167,13 @@
                 OnPropertyChanged("Nic");
             }
         }
-        #endregion
+
+        #endregion NIC
+
         #region Websites
-        List<string> _websites;
+
+        private List<string> _websites;
+
         /// <summary>
         /// Addresses of websites to ping for connectivity.
         /// </summary>
@@ -174,11 +186,15 @@
                 OnPropertyChanged("Websites");
             }
         }
-        #endregion
+
+        #endregion Websites
 
         // Login
+
         #region LoginAction
+
         private string _loginAction;
+
         /// <summary>
         /// The target site of the login form.
         /// </summary>
@@ -191,9 +207,13 @@
                 OnPropertyChanged("LoginAction");
             }
         }
-        #endregion
+
+        #endregion LoginAction
+
         #region LoginCredentials
+
         private List<Keyval> _loginCredentials;
+
         /// <summary>
         /// The parameters sent in the form to authenticate the login.
         /// </summary>
@@ -206,9 +226,13 @@
                 OnPropertyChanged("LoginCredentials");
             }
         }
-        #endregion
+
+        #endregion LoginCredentials
+
         #region LoginIsPost
+
         private bool _loginIsPost;
+
         /// <summary>
         /// Set whether the login form uses the GET or POST method.
         /// </summary>
@@ -221,9 +245,13 @@
                 OnPropertyChanged("LoginIsPost");
             }
         }
-        #endregion
+
+        #endregion LoginIsPost
+
         #region LoginSearchString
+
         private string _loginSearchString;
+
         /// <summary>
         /// The target site of the login form.
         /// </summary>
@@ -236,11 +264,15 @@
                 OnPropertyChanged("LoginSearchString");
             }
         }
-        #endregion
+
+        #endregion LoginSearchString
 
         // Misc
+
         #region Attempts
+
         private int _attempts;
+
         /// <summary>
         /// Denotes the number of attempts to ping before concluding it as timeout.
         /// </summary>
@@ -253,9 +285,13 @@
                 OnPropertyChanged("Attempts");
             }
         }
-        #endregion
+
+        #endregion Attempts
+
         #region Timeout
+
         private int _timeout;
+
         /// <summary>
         /// Denotes the maximum amount of time to wait for a ping reply (in miliseconds).
         /// </summary>
@@ -268,9 +304,13 @@
                 OnPropertyChanged("Timeout");
             }
         }
-        #endregion
+
+        #endregion Timeout
+
         #region TimeoutIncrement
+
         private int _timeoutIncrement;
+
         /// <summary>
         /// Denotes the maximum amount of time to wait for a ping reply (in miliseconds).
         /// </summary>
@@ -283,11 +323,15 @@
                 OnPropertyChanged("TimeoutIncrement");
             }
         }
-        #endregion
+
+        #endregion TimeoutIncrement
 
         // Timer
+
         #region TimerEnabled
-        bool _timerEnabled;
+
+        private bool _timerEnabled;
+
         public bool TimerEnabled
         {
             get => _timerEnabled;
@@ -297,9 +341,13 @@
                 OnPropertyChanged("TimerEnabled");
             }
         }
-        #endregion
+
+        #endregion TimerEnabled
+
         #region TimerCycle
-        int _timerCycle;
+
+        private int _timerCycle;
+
         public int TimerCycle
         {
             get => _timerCycle;
@@ -309,9 +357,13 @@
                 OnPropertyChanged("TimerCycle");
             }
         }
-        #endregion
+
+        #endregion TimerCycle
+
         #region TimerState
-        int _timerState;
+
+        private int _timerState;
+
         [XmlIgnore]
         public int TimerState
         {
@@ -324,12 +376,16 @@
                 OnPropertyChanged("TimerState");
             }
         }
-        #endregion
+
+        #endregion TimerState
 
         // Fields not to be saved
         // Progress
+
         #region ProgressValue
+
         private int _progressValue;
+
         [XmlIgnore]
         public int ProgressValue
         {
@@ -340,9 +396,13 @@
                 OnPropertyChanged("ProgressValue");
             }
         }
-        #endregion
+
+        #endregion ProgressValue
+
         #region ProgressFloat
+
         private float _progressFloat;
+
         [XmlIgnore]
         public float ProgressFloat
         {
@@ -353,9 +413,13 @@
                 OnPropertyChanged("ProgressFloat");
             }
         }
-        #endregion
+
+        #endregion ProgressFloat
+
         #region ProgressState
+
         private TaskbarItemProgressState _progressState;
+
         [XmlIgnore]
         public TaskbarItemProgressState ProgressState
         {
@@ -366,11 +430,15 @@
                 OnPropertyChanged("ProgressState");
             }
         }
-        #endregion
+
+        #endregion ProgressState
 
         // NicStatus
+
         #region NicStatus
+
         private bool _nicStatus;
+
         /// <summary>
         /// Last polled status of internet availability.
         /// </summary>
@@ -384,9 +452,13 @@
                 OnPropertyChanged("NicStatus");
             }
         }
-        #endregion
+
+        #endregion NicStatus
+
         #region NicPing
+
         private long _lastNicPing;
+
         /// <summary>
         /// Ping time from last nic poll.
         /// </summary>
@@ -400,9 +472,13 @@
                 OnPropertyChanged("LastNicPing");
             }
         }
-        #endregion
+
+        #endregion NicPing
+
         #region NicDest
+
         private string _lastNicDest;
+
         /// <summary>
         /// Ping destination from last nic poll.
         /// </summary>
@@ -415,11 +491,15 @@
                 _lastNicDest = value;
             }
         }
-        #endregion
+
+        #endregion NicDest
 
         // GatewayStatus
+
         #region GatewayStatus
+
         private bool _gatewayStatus;
+
         /// <summary>
         /// Last polled status of internet availability.
         /// </summary>
@@ -433,9 +513,13 @@
                 OnPropertyChanged("GatewayStatus");
             }
         }
-        #endregion
+
+        #endregion GatewayStatus
+
         #region GatewayPing
+
         private long _lastGatewayPing;
+
         /// <summary>
         /// Ping time from last gateway poll.
         /// </summary>
@@ -449,9 +533,13 @@
                 OnPropertyChanged("LastGatewayPing");
             }
         }
-        #endregion
+
+        #endregion GatewayPing
+
         #region GatewayDest
+
         private string _lastGatewayDest;
+
         /// <summary>
         /// Ping destination from last gateway poll.
         /// </summary>
@@ -464,11 +552,15 @@
                 _lastGatewayDest = value;
             }
         }
-        #endregion
+
+        #endregion GatewayDest
 
         // PortalStatus
+
         #region PortalStatus
+
         private bool _portalStatus;
+
         /// <summary>
         /// Last polled status of internet availability.
         /// </summary>
@@ -482,9 +574,13 @@
                 OnPropertyChanged("PortalStatus");
             }
         }
-        #endregion
+
+        #endregion PortalStatus
+
         #region PortalPing
+
         private long _lastPortalPing;
+
         /// <summary>
         /// Ping time from last portal poll.
         /// </summary>
@@ -498,9 +594,13 @@
                 OnPropertyChanged("LastPortalPing");
             }
         }
-        #endregion
+
+        #endregion PortalPing
+
         #region PortalDest
+
         private string _lastPortalDest;
+
         /// <summary>
         /// Ping destination from last portal poll.
         /// </summary>
@@ -513,11 +613,15 @@
                 _lastPortalDest = value;
             }
         }
-        #endregion
+
+        #endregion PortalDest
 
         // WebStatus
+
         #region WebStatus
+
         private bool _webStatus;
+
         /// <summary>
         /// Last polled status of internet availability.
         /// </summary>
@@ -531,9 +635,13 @@
                 OnPropertyChanged("WebStatus");
             }
         }
-        #endregion
+
+        #endregion WebStatus
+
         #region WebPing
+
         private long _lastWebPing;
+
         /// <summary>
         /// Ping time from last website poll.
         /// </summary>
@@ -547,9 +655,13 @@
                 OnPropertyChanged("LastWebPing");
             }
         }
-        #endregion
+
+        #endregion WebPing
+
         #region WebDest
+
         private string _lastWebDest;
+
         /// <summary>
         /// Ping destination from last website poll.
         /// </summary>
@@ -563,11 +675,15 @@
                 OnPropertyChanged("LastWebDest");
             }
         }
-        #endregion
+
+        #endregion WebDest
 
         // LoggedInStatus
+
         #region LoginStatus
+
         private bool _loginStatus;
+
         /// <summary>
         /// Last polled status of internet availability.
         /// </summary>
@@ -581,6 +697,7 @@
                 OnPropertyChanged("LoginStatus");
             }
         }
-        #endregion
+
+        #endregion LoginStatus
     }
 }

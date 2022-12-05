@@ -1,17 +1,12 @@
-﻿namespace Autologin.Extensions
+﻿using Autologin.DataTypes;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.NetworkInformation;
+
+namespace Autologin.Extensions
 {
-    #region Includes
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.NetworkInformation;
-    using System.Text;
-
-    using Autologin.DataTypes;
-    #endregion
-
     public class NetworkExtensions
     {
         public static FormUrlEncodedContent EncodeParams(List<Keyval> vars)

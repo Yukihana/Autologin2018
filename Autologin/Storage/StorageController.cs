@@ -1,38 +1,26 @@
-﻿namespace Autologin.Storage
+﻿using Autologin.Extensions;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Timers;
+using System.Xml.Serialization;
+
+namespace Autologin.Storage
 {
-    using Autologin.Extensions;
-    #region Includes
-
-    using System;
-    using System.ComponentModel;
-    using System.IO;
-    using System.Timers;
-    using System.Xml.Serialization;
-
-    #endregion
-
     public class StorageController
     {
-        #region Constructor(s)
+        // Infrastructure
 
-        /// <summary>
-        /// Initialises an instance of the StorageController class.
-        /// </summary>
+        private StorageModel _dataCache;
+
+        //Lifecycle
+
         public StorageController()
         {
-            DataCache = Load();
+            _dataCache = Load();
         }
 
-        #endregion
-
-        #region DataModel
-        /// <summary>
-        /// The Actual Data Structure
-        /// </summary>
-        private StorageModel DataCache;
-        #endregion
-
-        #region Public Interface
+        // API
 
         /// <summary>
         /// Gets the value of a storage property.
@@ -41,8 +29,8 @@
         /// <returns>Data contents of the property</returns>
         public object GetData(string PropertyName)
         {
-            var p = DataCache.GetType().GetProperty(PropertyName);
-            return p?.GetValue(DataCache, null);
+            var p = _dataCache.GetType().GetProperty(PropertyName);
+            return p?.GetValue(_dataCache, null);
         }
 
         /// <summary>
@@ -53,10 +41,10 @@
         /// <returns>True on success</returns>
         public bool SetData(string PropertyName, object Value)
         {
-            var p = DataCache.GetType().GetProperty(PropertyName);
+            var p = _dataCache.GetType().GetProperty(PropertyName);
             if (p != null)
             {
-                p.SetValue(DataCache, Value, null);
+                p.SetValue(_dataCache, Value, null);
                 InitiateSave();
                 return true;
             }
@@ -68,29 +56,29 @@
         /// </summary>
         public void FinalSave()
         {
-            Save(DataCache);
+            Save(_dataCache);
         }
 
-        #endregion
+        // Autosave
 
-        #region Autonomous Save Logic
-        Timer AutosaveTimer = null;
-        BackgroundWorker BGWriter = null;
-        double SaveDelay = 60000;
+        private Timer AutosaveTimer = null;
+        private BackgroundWorker BGWriter = null;
+        private double SaveDelay = 60000;
+
         /// <summary>
         /// Gracefully delays the Save operation everytime it is invoked, to disarm frequent write attempts.
         /// </summary>
         private void InitiateSave()
         {
             // One-Time Assignment
-            if(AutosaveTimer==null)
+            if (AutosaveTimer == null)
             {
                 AutosaveTimer = new Timer();
                 AutosaveTimer.Elapsed += AutosaveTimer_Elapsed;
             }
 
             // Reset Timer
-            if(AutosaveTimer.Enabled)
+            if (AutosaveTimer.Enabled)
             {
                 AutosaveTimer.Stop();
             }
@@ -99,6 +87,7 @@
             // Start Timer
             AutosaveTimer.Start();
         }
+
         /// <summary>
         /// When the timer has elapsed, this starts the Save operation in a BackgroundWorker.
         /// </summary>
@@ -114,13 +103,13 @@
             }
 
             // Return if the worker is busy
-            if(BGWriter.IsBusy)
+            if (BGWriter.IsBusy)
             {
                 return;
             }
 
             // Start saving on a separate thread
-            BGWriter.RunWorkerAsync(DataCache);
+            BGWriter.RunWorkerAsync(_dataCache);
         }
 
         private void WriteToDiskAsync(object sender, DoWorkEventArgs e)
@@ -132,9 +121,7 @@
             Save(WriteData);
         }
 
-        #endregion
-
-        #region Load / Save : Private
+        // Load / Save
 
         /// <summary>
         /// Loads storage data from the disk.
@@ -185,7 +172,6 @@
             // Generate output file in memory-stream
             using (MemoryStream m = new MemoryStream())
             {
-                // Attempt to render the MemoryStream
                 XmlSerializer x = new XmlSerializer(typeof(StorageModel));
 
                 try
@@ -206,16 +192,14 @@
                         m.WriteTo(fs);
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     //Coordinator.Notify(new NotificationObject(e.Message, e.Source, MessageBoxImage.Error)); TODO
                 }
             }
         }
 
-        #endregion
-
-        #region Miscellaneous
+        // Miscellaneous
 
         /// <summary>
         /// Gets the specified or default path to the storage file on the secondary storage media.
@@ -230,20 +214,14 @@
             foreach (string a in Environment.GetCommandLineArgs())
             {
                 if (a.StartsWith(ArgName, StringComparison.OrdinalIgnoreCase))
-                {
                     r = a.Substring(ArgName.Length - 1);
-                }
             }
 
             // Set full path address
             if (!Path.IsPathRooted(r))
-            {
                 r = Path.GetFullPath(r);
-            }
 
             return r;
         }
-
-        #endregion
     }
 }

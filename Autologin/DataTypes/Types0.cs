@@ -1,14 +1,7 @@
-﻿namespace Autologin.DataTypes
-{
-    #region Includes
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    #endregion
+﻿using System;
 
+namespace Autologin.DataTypes
+{
     [Serializable]
     public class Keyval
     {
@@ -17,8 +10,8 @@
 
         public Keyval()
         {
-
         }
+
         public Keyval(string K, string V)
         {
             key = K;

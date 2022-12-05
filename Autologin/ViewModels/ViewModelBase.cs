@@ -1,16 +1,12 @@
 ﻿using Autologin.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace Autologin.ViewModels
 {
-    class ViewModelBase
+    internal class ViewModelBase
     {
-        #region DataIdentifier
         private string _dataIdentifier = string.Empty;
+
         /// <summary>
         /// Storage identifier for the model data
         /// </summary>
@@ -22,9 +18,9 @@ namespace Autologin.ViewModels
                 _dataIdentifier = value;
             }
         }
-        #endregion
-        #region SaveLock
+
         private bool _saveLock = false;
+
         /// <summary>
         /// Flag to prevent saving during loading data.
         /// </summary>
@@ -36,15 +32,10 @@ namespace Autologin.ViewModels
                 _saveLock = value;
             }
         }
-        #endregion
 
-        #region Load and Save
-        /// <summary>
-        /// Loads data from the datacache.
-        /// </summary>
-        protected static void LoadData<T,X>(T ThisViewModel, X DefVal) where T: ViewModelBase where X: ModelBase
+        protected static void LoadData<T, X>(T ThisViewModel, X DefVal) where T : ViewModelBase where X : ModelBase
         {
-            X r = default(X);
+            X r = default;
 
             // Try to retrieve the data from the storage controller
             if (Application.Current is App a)
@@ -77,7 +68,5 @@ namespace Autologin.ViewModels
                     );
             }
         }
-
-        #endregion
     }
 }
